@@ -21,7 +21,7 @@ const themeConfig = {
   dark: {
     bg: 'bg-gradient-to-br from-slate-800 to-slate-900',
     text: 'text-white',
-    headerText: 'text-transparent bg-clip-text bg-gradient-to-r from-sky-300 to-indigo-300',
+    headerText: 'text-transparent bg-clip-text bg-gradient-to-r from-orange-300 to-amber-300',
     subHeaderText: 'text-slate-300',
     borderColor: 'border-slate-600',
     taskBg: 'bg-slate-700/60',
@@ -37,7 +37,7 @@ const themeConfig = {
   light: {
     bg: 'bg-gradient-to-br from-white to-gray-100',
     text: 'text-gray-800',
-    headerText: 'text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500',
+    headerText: 'text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500',
     subHeaderText: 'text-gray-600',
     borderColor: 'border-gray-200',
     taskBg: 'bg-white/80 border',
@@ -156,7 +156,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Aspect Ratio</label>
-                <select value={ratio} onChange={e => setRatio(e.target.value as ExportRatio)} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <select value={ratio} onChange={e => setRatio(e.target.value as ExportRatio)} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
                   <option value="square">Square (1:1)</option>
                   <option value="portrait">Portrait (9:16)</option>
                   <option value="landscape">Landscape (16:9)</option>
@@ -164,14 +164,14 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">File Type</label>
-                <select value={fileType} onChange={e => setFileType(e.target.value as 'png' | 'jpeg')} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                <select value={fileType} onChange={e => setFileType(e.target.value as 'png' | 'jpeg')} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500">
                   <option value="png">PNG</option>
                   <option value="jpeg">JPEG</option>
                 </select>
               </div>
               <div>
                 <label htmlFor="export-title" className="block text-sm font-medium text-gray-700 mb-1">Custom Title</label>
-                <input type="text" id="export-title" value={options.title} onChange={e => setOptions(prev => ({ ...prev, title: e.target.value }))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                <input type="text" id="export-title" value={options.title} onChange={e => setOptions(prev => ({ ...prev, title: e.target.value }))} className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-orange-500 focus:border-orange-500" />
               </div>
             </div>
 
@@ -179,7 +179,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
               <label className="block text-sm font-medium text-gray-700 mb-2">Theme</label>
               <div className="grid grid-cols-3 gap-2">
                 {(Object.keys(themeConfig)).map(themeKey => (
-                  <button key={themeKey} onClick={() => setOptions(prev => ({ ...prev, theme: themeKey }))} className={`capitalize text-sm font-semibold p-2 rounded-md transition-all ${options.theme === themeKey ? 'ring-2 ring-indigo-500 ring-offset-1' : ''}`}>
+                  <button key={themeKey} onClick={() => setOptions(prev => ({ ...prev, theme: themeKey }))} className={`capitalize text-sm font-semibold p-2 rounded-md transition-all ${options.theme === themeKey ? 'ring-2 ring-orange-500 ring-offset-1' : ''}`}>
                     <div className={`w-full h-8 rounded ${themeConfig[themeKey as keyof typeof themeConfig].bg} mb-1 border`}></div>
                     {themeKey}
                   </button>
@@ -193,7 +193,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
                     {/* Fix: Use 'as const' to give 'key' a specific literal union type, ensuring options[key] is a boolean. */}
                     {(['showSubject', 'showDeadline', 'showPriority', 'showCategoryIcon', 'showWatermark'] as const).map(key => (
                         <label key={key} className="flex items-center">
-                            <input type="checkbox" name={key} checked={options[key]} onChange={handleOptionChange} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                            <input type="checkbox" name={key} checked={options[key]} onChange={handleOptionChange} className="h-4 w-4 rounded border-gray-300 text-orange-600 focus:ring-orange-500" />
                             <span className="ml-2 text-sm text-gray-800">Show {key.replace('show', '').replace(/([A-Z])/g, ' $1').trim()}</span>
                         </label>
                     ))}
@@ -203,7 +203,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
              <button
                 onClick={handleExport}
                 disabled={isExporting}
-                className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:bg-gray-400 disabled:cursor-wait mt-2"
+                className="w-full flex items-center justify-center bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:bg-gray-400 disabled:cursor-wait mt-2"
             >
               {isExporting ? <CheckCircleIcon className="w-5 h-5 animate-pulse" /> : <DownloadIcon />}
               <span className="ml-2">{isExporting ? 'Exporting...' : 'Download Image'}</span>

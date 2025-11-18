@@ -23,8 +23,8 @@ const Controls: React.FC<ControlsProps> = ({ filter, setFilter, sortBy, setSortB
     { value: 'dateAdded', label: 'Date Added' },
   ];
 
-  const baseButtonClass = "px-3 sm:px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500";
-  const activeFilterClass = "bg-indigo-600 text-white shadow-md";
+  const baseButtonClass = "px-3 sm:px-4 py-2 text-sm font-semibold rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500";
+  const activeFilterClass = "bg-orange-600 text-white shadow-md";
   const inactiveFilterClass = "bg-white text-gray-600 hover:bg-gray-100";
 
   return (
@@ -46,7 +46,7 @@ const Controls: React.FC<ControlsProps> = ({ filter, setFilter, sortBy, setSortB
           id="sort"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value as SortType)}
-          className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md shadow-sm"
+          className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md shadow-sm"
         >
           {sortOptions.map(option => (
             <option key={option.value} value={option.value}>{option.label}</option>

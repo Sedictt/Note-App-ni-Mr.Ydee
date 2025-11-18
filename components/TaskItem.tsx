@@ -28,7 +28,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
       bg-white rounded-xl shadow-md transition-all duration-300 overflow-hidden
       border-l-8 ${deadlineColor}
       ${task.isCompleted ? 'opacity-70 bg-gray-50' : ''}
-      ${isSelected ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
+      ${isSelected ? 'ring-2 ring-orange-500 ring-offset-2' : ''}
       hover:shadow-lg hover:scale-[1.02]
     `}>
       <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -36,7 +36,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
         <div className="flex items-center flex-grow w-full">
           <input
             type="checkbox"
-            className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer flex-shrink-0"
+            className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer flex-shrink-0"
             checked={isSelected}
             onChange={() => onToggleSelection(task.id)}
             aria-label={`Select task ${task.name}`}

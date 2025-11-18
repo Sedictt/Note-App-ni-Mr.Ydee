@@ -123,7 +123,7 @@ const App: React.FC = () => {
     <div className="min-h-screen font-sans text-gray-800">
       <main className="max-w-4xl mx-auto p-3 sm:p-4 md:p-8">
         <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 tracking-tight">Task Planner</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500 tracking-tight">Task Planner</h1>
           <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsExportOpen(true)}
@@ -135,7 +135,7 @@ const App: React.FC = () => {
             </button>
             <button
               onClick={openNewForm}
-              className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+              className="flex items-center bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
             >
               <PlusIcon />
               <span className="ml-2 hidden sm:inline">Add Task</span>

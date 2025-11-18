@@ -48,37 +48,37 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ onClose, onAddTask, onUpd
         <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">Task Name</label>
-            <input type="text" name="name" id="name" value={task.name} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="text" name="name" id="name" value={task.name} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500" />
           </div>
           <div>
             <label htmlFor="subject" className="block text-sm font-medium text-gray-700">Subject / Course</label>
-            <input type="text" name="subject" id="subject" value={task.subject} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="text" name="subject" id="subject" value={task.subject} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500" />
           </div>
           <div>
             <label htmlFor="deadline" className="block text-sm font-medium text-gray-700">Deadline</label>
-            <input type="datetime-local" name="deadline" id="deadline" value={task.deadline} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            <input type="datetime-local" name="deadline" id="deadline" value={task.deadline} onChange={handleChange} required className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500" />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="priority" className="block text-sm font-medium text-gray-700">Priority</label>
-              <select name="priority" id="priority" value={task.priority} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+              <select name="priority" id="priority" value={task.priority} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500">
                 {Object.values(Priority).map(p => <option key={p} value={p}>{p}</option>)}
               </select>
             </div>
             <div>
               <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-              <select name="category" id="category" value={task.category} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+              <select name="category" id="category" value={task.category} onChange={handleChange} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500">
                 {Object.values(Category).map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
           </div>
           <div>
             <label htmlFor="notes" className="block text-sm font-medium text-gray-700">Notes (Optional)</label>
-            <textarea name="notes" id="notes" value={task.notes} onChange={handleChange} rows={3} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+            <textarea name="notes" id="notes" value={task.notes} onChange={handleChange} rows={3} className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-orange-500 focus:border-orange-500" />
           </div>
           <div className="flex justify-end space-x-3 pt-4 border-t mt-4">
             <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 font-semibold px-4 py-2 rounded-md hover:bg-gray-300 transition-colors">Cancel</button>
-            <button type="submit" className="bg-indigo-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors">{taskToEdit ? 'Save Changes' : 'Add Task'}</button>
+            <button type="submit" className="bg-orange-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-orange-700 transition-colors">{taskToEdit ? 'Save Changes' : 'Add Task'}</button>
           </div>
         </form>
       </div>
