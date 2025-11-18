@@ -90,26 +90,51 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
   };
 
   const handleExport = async () => {
-    if (!exportRef.current) return;
-    
+    const element = exportRef.current;
+    if (!element) {
+        alert('Could not find the element to export.');
+        return;
+    }
+
     setIsExporting(true);
     try {
-      const { w, h } = aspectRatios[ratio];
-      const dataUrl = fileType === 'png'
-        ? await htmlToImage.toPng(exportRef.current, { width: w, height: h, pixelRatio: 1 })
-        : await htmlToImage.toJpeg(exportRef.current, { width: w, height: h, quality: 0.95 });
+        const { w, h } = aspectRatios[ratio];
 
-      const link = document.createElement('a');
-      link.download = `task-list-${new Date().toISOString().split('T')[0]}.${fileType}`;
-      link.href = dataUrl;
-      link.click();
+        // This scales the content correctly. We calculate a multiplier based on the
+        // desired image width vs the on-screen preview width. We then use this to
+        // scale up the base font size. Because Tailwind uses `rem` units, increasing
+        // the root font size proportionally scales all text and spacing.
+        const fontSizeMultiplier = w / element.offsetWidth;
+        const baseFontSize = 10; // Using 10px as a base makes scaling math clean.
+        const scaledFontSize = baseFontSize * fontSizeMultiplier;
+
+        const imageOptions = {
+            width: w,
+            height: h,
+            // Setting pixelRatio to 2 renders at 2x resolution and scales down,
+            // resulting in a much crisper, higher-quality final image.
+            pixelRatio: 2,
+            style: {
+                fontSize: `${scaledFontSize}px`,
+            },
+        };
+
+        const dataUrl = fileType === 'png'
+            ? await htmlToImage.toPng(element, imageOptions)
+            : await htmlToImage.toJpeg(element, { ...imageOptions, quality: 0.95 });
+
+        const link = document.createElement('a');
+        link.download = `task-list-${new Date().toISOString().split('T')[0]}.${fileType}`;
+        link.href = dataUrl;
+        link.click();
     } catch (error) {
-      console.error('oops, something went wrong!', error);
-      alert('Could not export image. Please try again.');
+        console.error('Oops, something went wrong!', error);
+        alert('Could not export image. Please try again.');
     } finally {
-      setIsExporting(false);
+        setIsExporting(false);
     }
   };
+
 
   const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
