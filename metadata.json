@@ -1,0 +1,5 @@
+{
+  "name": "Student Task Planner",
+  "description": "A modern and visually appealing task manager designed for students. It helps organize assignments, projects, and exams with features like priority levels, categories, and deadline-based color-coding. The app includes a unique feature to export task lists as stylish images for social media.",
+  "requestFramePermissions": []
+}
