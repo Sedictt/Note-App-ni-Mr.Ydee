@@ -19,10 +19,18 @@ const App: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortBy, setSortBy] = useState<SortType>('deadline');
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
+  const [isBulkEditMode, setIsBulkEditMode] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
+  
+  const toggleBulkEditMode = () => {
+    if (isBulkEditMode) { // When turning OFF
+        setSelectedTasks(new Set());
+    }
+    setIsBulkEditMode(prev => !prev);
+  };
 
   const handleAddTask = (task: Task) => {
     setTasks([...tasks, task]);
@@ -126,6 +134,15 @@ const App: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-red-500 tracking-tight">Task Planner</h1>
           <div className="flex items-center space-x-2">
             <button
+              onClick={toggleBulkEditMode}
+              className={`flex items-center border font-semibold py-2 px-4 rounded-lg shadow-sm transition-all duration-300
+                ${isBulkEditMode 
+                    ? 'bg-gray-200 text-gray-700 border-gray-300 hover:bg-gray-300' 
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'}`}
+            >
+              {isBulkEditMode ? 'Cancel' : 'Bulk Edit'}
+            </button>
+            <button
               onClick={() => setIsExportOpen(true)}
               disabled={selectedTasks.size === 0}
               className="flex items-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm transition-all duration-300 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
@@ -154,6 +171,7 @@ const App: React.FC = () => {
           onToggleSelection={handleToggleSelection}
           onSelectAll={() => handleSelectAll(sortedTasks.map(t => t.id))}
           onAddNew={openNewForm}
+          isBulkEditMode={isBulkEditMode}
         />
 
         {isFormOpen && (

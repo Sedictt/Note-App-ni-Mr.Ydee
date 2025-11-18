@@ -9,6 +9,7 @@ interface TaskItemProps {
   onToggleComplete: (id: string) => void;
   isSelected: boolean;
   onToggleSelection: (id: string) => void;
+  isBulkEditMode: boolean;
 }
 
 const getDeadlineColor = (deadline: string, isCompleted: boolean) => {
@@ -20,7 +21,7 @@ const getDeadlineColor = (deadline: string, isCompleted: boolean) => {
   return 'border-blue-500'; // On track
 };
 
-const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleComplete, isSelected, onToggleSelection }) => {
+const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleComplete, isSelected, onToggleSelection, isBulkEditMode }) => {
   const deadlineColor = getDeadlineColor(task.deadline, task.isCompleted);
   
   return (
@@ -28,18 +29,20 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
       bg-white rounded-xl shadow-md transition-all duration-300 overflow-hidden
       border-l-8 ${deadlineColor}
       ${task.isCompleted ? 'opacity-70 bg-gray-50' : ''}
-      ${isSelected ? 'ring-2 ring-orange-500 ring-offset-2' : ''}
+      ${isSelected && isBulkEditMode ? 'ring-2 ring-orange-500 ring-offset-2' : ''}
       hover:shadow-lg hover:scale-[1.02]
     `}>
       <div className="p-5 flex items-start gap-4">
         {/* Checkbox for selection */}
-        <input
-          type="checkbox"
-          className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer flex-shrink-0 mt-1"
-          checked={isSelected}
-          onChange={() => onToggleSelection(task.id)}
-          aria-label={`Select task ${task.name}`}
-        />
+        {isBulkEditMode && (
+          <input
+            type="checkbox"
+            className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500 cursor-pointer flex-shrink-0 mt-1"
+            checked={isSelected}
+            onChange={() => onToggleSelection(task.id)}
+            aria-label={`Select task ${task.name}`}
+          />
+        )}
 
         {/* All other content */}
         <div className="flex-grow flex flex-col min-w-0">

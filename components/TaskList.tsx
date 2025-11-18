@@ -12,6 +12,7 @@ interface TaskListProps {
   onToggleSelection: (id: string) => void;
   onSelectAll: () => void;
   onAddNew: () => void;
+  isBulkEditMode: boolean;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -23,6 +24,7 @@ const TaskList: React.FC<TaskListProps> = ({
   onToggleSelection,
   onSelectAll,
   onAddNew,
+  isBulkEditMode,
 }) => {
   if (tasks.length === 0) {
     return (
@@ -47,21 +49,23 @@ const TaskList: React.FC<TaskListProps> = ({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center bg-white p-3 rounded-lg shadow-sm">
-        <input
-          type="checkbox"
-          className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
-          checked={allVisibleSelected}
-          ref={input => {
-            if (input) input.indeterminate = someVisibleSelected;
-          }}
-          onChange={onSelectAll}
-          aria-label="Select all visible tasks"
-        />
-        <label className="ml-3 text-sm font-medium text-gray-700">
-          {allVisibleSelected ? 'Deselect All' : 'Select All'}
-        </label>
-      </div>
+      {isBulkEditMode && (
+        <div className="flex items-center bg-white p-3 rounded-lg shadow-sm">
+          <input
+            type="checkbox"
+            className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
+            checked={allVisibleSelected}
+            ref={input => {
+              if (input) input.indeterminate = someVisibleSelected;
+            }}
+            onChange={onSelectAll}
+            aria-label="Select all visible tasks"
+          />
+          <label className="ml-3 text-sm font-medium text-gray-700">
+            {allVisibleSelected ? 'Deselect All' : 'Select All'}
+          </label>
+        </div>
+      )}
       {tasks.map(task => (
         <TaskItem
           key={task.id}
@@ -71,6 +75,7 @@ const TaskList: React.FC<TaskListProps> = ({
           onToggleComplete={onToggleComplete}
           isSelected={selectedTasks.has(task.id)}
           onToggleSelection={onToggleSelection}
+          isBulkEditMode={isBulkEditMode}
         />
       ))}
     </div>
