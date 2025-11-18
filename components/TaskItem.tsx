@@ -1,6 +1,6 @@
 import React from 'react';
 import { Task } from '../types';
-import { PencilIcon, TrashIcon, CalendarIcon, CheckCircleIcon, ArrowUturnLeftIcon } from './Icons';
+import { PencilIcon, TrashIcon, CalendarIcon, CheckCircleIcon, ArrowUturnLeftIcon, NotesIcon } from './Icons';
 
 interface TaskItemProps {
   task: Task;
@@ -69,7 +69,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
             </div>
           </div>
 
-          {/* Bottom Row: Subject and Deadline */}
+          {/* Middle Row: Subject and Deadline */}
           <div className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mt-2 gap-x-4 gap-y-1 text-sm">
               <p className="text-gray-600">{task.subject}</p>
               <div className="flex items-center text-gray-700 whitespace-nowrap flex-shrink-0">
@@ -77,6 +77,16 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
                 <span>{new Date(task.deadline).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
               </div>
           </div>
+
+          {/* Bottom Row: Notes */}
+          {task.notes && (
+            <div className="mt-3 pt-3 border-t border-gray-200">
+                <div className="flex items-start gap-2.5 text-gray-600">
+                    <NotesIcon className="w-4 h-4 mt-0.5 flex-shrink-0 text-gray-400" />
+                    <p className="text-sm whitespace-pre-wrap">{task.notes}</p>
+                </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

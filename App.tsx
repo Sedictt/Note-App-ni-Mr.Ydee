@@ -4,6 +4,7 @@ import TaskList from './components/TaskList';
 import TaskFormModal from './components/TaskFormModal';
 import Controls from './components/Controls';
 import ExportModal from './components/ExportModal';
+import ConfirmationModal from './components/ConfirmationModal';
 import { PlusIcon, DownloadIcon } from './components/Icons';
 import { db } from './firebase';
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
@@ -20,6 +21,8 @@ const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortType>('deadline');
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
   const [isBulkEditMode, setIsBulkEditMode] = useState(false);
+  const [confirmation, setConfirmation] = useState<{ message: string; onConfirm: () => void } | null>(null);
+
 
   const tasksCollectionRef = collection(db, 'tasks');
 
@@ -92,6 +95,16 @@ const App: React.FC = () => {
         console.error("Error deleting task: ", error);
         setTasks(originalTasks);
     }
+  };
+
+  const requestDeleteConfirmation = (id: string) => {
+    const taskToDelete = tasks.find(t => t.id === id);
+    if (!taskToDelete) return;
+
+    setConfirmation({
+        message: `Are you sure you want to delete the task "${taskToDelete.name}"? This action cannot be undone.`,
+        onConfirm: () => handleDeleteTask(id),
+    });
   };
 
   const handleToggleComplete = async (id: string) => {
@@ -225,7 +238,7 @@ const App: React.FC = () => {
           <TaskList
             tasks={sortedTasks}
             onEdit={openEditForm}
-            onDelete={handleDeleteTask}
+            onDelete={requestDeleteConfirmation}
             onToggleComplete={handleToggleComplete}
             selectedTasks={selectedTasks}
             onToggleSelection={handleToggleSelection}
@@ -248,6 +261,17 @@ const App: React.FC = () => {
           <ExportModal
             onClose={() => setIsExportOpen(false)}
             tasks={tasksToExport}
+          />
+        )}
+
+        {confirmation && (
+          <ConfirmationModal
+            message={confirmation.message}
+            onConfirm={() => {
+              confirmation.onConfirm();
+              setConfirmation(null);
+            }}
+            onCancel={() => setConfirmation(null)}
           />
         )}
       </main>
