@@ -1,6 +1,6 @@
 import React from 'react';
-import { Task, Priority } from '../types';
-import { PencilIcon, TrashIcon, CalendarIcon, TagIcon, FlagIcon, NotesIcon, CheckCircleIcon, ArrowUturnLeftIcon } from './Icons';
+import { Task } from '../types';
+import { PencilIcon, TrashIcon, CalendarIcon, CheckCircleIcon, ArrowUturnLeftIcon } from './Icons';
 
 interface TaskItemProps {
   task: Task;
@@ -10,12 +10,6 @@ interface TaskItemProps {
   isSelected: boolean;
   onToggleSelection: (id: string) => void;
 }
-
-const priorityConfig = {
-  [Priority.High]: { bg: 'bg-red-100', text: 'text-red-800' },
-  [Priority.Medium]: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-  [Priority.Low]: { bg: 'bg-green-100', text: 'text-green-800' },
-};
 
 const getDeadlineColor = (deadline: string, isCompleted: boolean) => {
   if (isCompleted) return 'border-gray-300';
@@ -53,26 +47,16 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
           </div>
         </div>
 
-        {/* Details and Actions */}
-        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pl-1 sm:pl-0">
-            {/* Details Section */}
-            <div className="flex-grow grid grid-cols-2 sm:flex sm:items-center gap-x-4 gap-y-2 text-sm text-gray-700">
-                <div className={`flex items-center px-3 py-1 rounded-full text-xs font-semibold ${priorityConfig[task.priority].bg} ${priorityConfig[task.priority].text}`}>
-                <FlagIcon className="w-4 h-4 mr-1.5" />
-                {task.priority}
-                </div>
-                <div className="flex items-center">
-                <TagIcon className="w-4 h-4 mr-1.5 text-gray-500" />
-                {task.category}
-                </div>
-                <div className="flex items-center col-span-2">
-                <CalendarIcon className="w-4 h-4 mr-1.5 text-gray-500" />
-                {new Date(task.deadline).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
-                </div>
+        {/* Deadline and Actions */}
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-end sm:items-center gap-4 sm:gap-6 pl-9 sm:pl-0">
+            {/* Deadline */}
+            <div className="flex items-center text-sm text-gray-700 whitespace-nowrap">
+                <CalendarIcon className="w-4 h-4 mr-1.5 text-gray-500 flex-shrink-0" />
+                <span>{new Date(task.deadline).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center space-x-1 self-end sm:self-center sm:ml-4">
+            <div className="flex items-center space-x-1">
               <button
                 onClick={() => onToggleComplete(task.id)}
                 className={`p-2 rounded-full transition-colors ${
@@ -89,11 +73,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
             </div>
         </div>
       </div>
-      {task.notes && (
-          <div className="bg-gray-50/80 px-5 py-3 border-t border-gray-200">
-            <p className="text-sm text-gray-700 flex items-start"><NotesIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500"/> {task.notes}</p>
-          </div>
-        )}
     </div>
   );
 };
