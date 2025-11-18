@@ -140,7 +140,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
     setOptions(prev => ({...prev, [name]: checked }));
   };
 
-  const uniqueSubjects = [...new Set(tasks.map(t => t.subject))];
   const currentTheme = themeConfig[options.theme as keyof typeof themeConfig];
 
   return (
@@ -206,7 +205,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
                 disabled={isExporting}
                 className="w-full flex items-center justify-center bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 disabled:bg-gray-400 disabled:cursor-wait mt-2"
             >
-              {isExporting ? <CheckCircleIcon /> : <DownloadIcon />}
+              {isExporting ? <CheckCircleIcon className="w-5 h-5 animate-pulse" /> : <DownloadIcon />}
               <span className="ml-2">{isExporting ? 'Exporting...' : 'Download Image'}</span>
             </button>
           </div>
@@ -215,7 +214,6 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
                 <header className={`flex justify-between items-start border-b ${currentTheme.borderColor} pb-4`}>
                     <div>
                         <h1 className={`text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight ${currentTheme.headerText}`}>{options.title}</h1>
-                        {options.showSubject && <p className={`text-base lg:text-lg ${currentTheme.subHeaderText}`}>{uniqueSubjects.join(', ')}</p>}
                     </div>
                     <div className="text-right text-xs lg:text-sm text-slate-400 flex-shrink-0 ml-4">
                         <p>{new Date().toLocaleDateString('en-US', { weekday: 'long' })}</p>
@@ -228,6 +226,7 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
                             {options.showCategoryIcon && <div className="flex-shrink-0">{categoryIcons[task.category]}</div>}
                             <div className="flex-grow">
                                 <p className={`font-semibold text-base lg:text-lg ${currentTheme.taskText}`}>{task.name}</p>
+                                {options.showSubject && <p className={`text-sm ${currentTheme.taskSubText}`}>{task.subject}</p>}
                                 {options.showDeadline && <p className={`text-sm lg:text-base ${currentTheme.taskSubText}`}>{new Date(task.deadline).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</p>}
                             </div>
                             {options.showPriority &&

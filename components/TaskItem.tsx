@@ -1,6 +1,6 @@
 import React from 'react';
 import { Task, Priority } from '../types';
-import { PencilIcon, TrashIcon, CalendarIcon, TagIcon, FlagIcon, NotesIcon } from './Icons';
+import { PencilIcon, TrashIcon, CalendarIcon, TagIcon, FlagIcon, NotesIcon, CheckCircleIcon, ArrowUturnLeftIcon } from './Icons';
 
 interface TaskItemProps {
   task: Task;
@@ -38,7 +38,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
       hover:shadow-lg hover:scale-[1.02]
     `}>
       <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-        {/* Checkboxes and Task Name */}
+        {/* Checkbox and Task Name */}
         <div className="flex items-center flex-grow w-full">
           <input
             type="checkbox"
@@ -46,16 +46,6 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
             checked={isSelected}
             onChange={() => onToggleSelection(task.id)}
             aria-label={`Select task ${task.name}`}
-          />
-          <input
-            type="checkbox"
-            className="ml-4 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer flex-shrink-0"
-            checked={task.isCompleted}
-            onChange={(e) => {
-              e.stopPropagation();
-              onToggleComplete(task.id);
-            }}
-            aria-label={`Mark task ${task.name} as complete`}
           />
           <div className="ml-4 flex-grow">
             <p className={`font-bold text-lg text-gray-800 ${task.isCompleted ? 'line-through' : ''}`}>{task.name}</p>
@@ -83,8 +73,19 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
 
             {/* Action Buttons */}
             <div className="flex items-center space-x-1 self-end sm:self-center sm:ml-4">
-            <button onClick={() => onEdit(task)} className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-800"><PencilIcon /></button>
-            <button onClick={() => onDelete(task.id)} className="p-2 rounded-full hover:bg-red-100 transition-colors text-red-500 hover:text-red-700"><TrashIcon /></button>
+              <button
+                onClick={() => onToggleComplete(task.id)}
+                className={`p-2 rounded-full transition-colors ${
+                  task.isCompleted
+                    ? 'hover:bg-yellow-100 text-yellow-500 hover:text-yellow-700'
+                    : 'hover:bg-green-100 text-green-500 hover:text-green-700'
+                }`}
+                title={task.isCompleted ? 'Mark as Incomplete' : 'Mark as Complete'}
+              >
+                {task.isCompleted ? <ArrowUturnLeftIcon /> : <CheckCircleIcon className="w-5 h-5" />}
+              </button>
+              <button onClick={() => onEdit(task)} className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-800" title="Edit Task"><PencilIcon /></button>
+              <button onClick={() => onDelete(task.id)} className="p-2 rounded-full hover:bg-red-100 transition-colors text-red-500 hover:text-red-700" title="Delete Task"><TrashIcon /></button>
             </div>
         </div>
       </div>
