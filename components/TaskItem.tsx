@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Task, Priority, Category } from '../types';
+import { Task, Priority } from '../types';
 import { PencilIcon, TrashIcon, CalendarIcon, TagIcon, FlagIcon, NotesIcon } from './Icons';
 
 interface TaskItemProps {
@@ -13,9 +12,9 @@ interface TaskItemProps {
 }
 
 const priorityConfig = {
-  [Priority.High]: { bg: 'bg-red-100', text: 'text-red-800', border: 'border-red-500' },
-  [Priority.Medium]: { bg: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-500' },
-  [Priority.Low]: { bg: 'bg-green-100', text: 'text-green-800', border: 'border-green-500' },
+  [Priority.High]: { bg: 'bg-red-100', text: 'text-red-800' },
+  [Priority.Medium]: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+  [Priority.Low]: { bg: 'bg-green-100', text: 'text-green-800' },
 };
 
 const getDeadlineColor = (deadline: string, isCompleted: boolean) => {
@@ -33,22 +32,24 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
   return (
     <div className={`
       bg-white rounded-xl shadow-md transition-all duration-300 overflow-hidden
-      border-l-4 ${deadlineColor}
-      ${task.isCompleted ? 'opacity-60' : ''}
+      border-l-8 ${deadlineColor}
+      ${task.isCompleted ? 'opacity-70 bg-gray-50' : ''}
       ${isSelected ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}
+      hover:shadow-lg hover:scale-[1.02]
     `}>
-      <div className="p-5 flex flex-col md:flex-row items-start md:items-center">
-        <div className="flex items-center flex-grow mb-4 md:mb-0">
+      <div className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        {/* Checkboxes and Task Name */}
+        <div className="flex items-center flex-grow w-full">
           <input
             type="checkbox"
-            className="h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+            className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer flex-shrink-0"
             checked={isSelected}
             onChange={() => onToggleSelection(task.id)}
             aria-label={`Select task ${task.name}`}
           />
           <input
             type="checkbox"
-            className="ml-4 h-6 w-6 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer"
+            className="ml-4 h-5 w-5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer flex-shrink-0"
             checked={task.isCompleted}
             onChange={(e) => {
               e.stopPropagation();
@@ -62,29 +63,34 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, onEdit, onDelete, onToggleCom
           </div>
         </div>
 
-        <div className="w-full md:w-auto grid grid-cols-2 sm:grid-cols-4 md:flex md:items-center gap-4 text-sm text-gray-700">
-            <div className={`flex items-center px-3 py-1 rounded-full text-xs font-semibold ${priorityConfig[task.priority].bg} ${priorityConfig[task.priority].text}`}>
-              <FlagIcon className="w-4 h-4 mr-1" />
-              {task.priority}
+        {/* Details and Actions */}
+        <div className="w-full sm:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pl-1 sm:pl-0">
+            {/* Details Section */}
+            <div className="flex-grow grid grid-cols-2 sm:flex sm:items-center gap-x-4 gap-y-2 text-sm text-gray-700">
+                <div className={`flex items-center px-3 py-1 rounded-full text-xs font-semibold ${priorityConfig[task.priority].bg} ${priorityConfig[task.priority].text}`}>
+                <FlagIcon className="w-4 h-4 mr-1.5" />
+                {task.priority}
+                </div>
+                <div className="flex items-center">
+                <TagIcon className="w-4 h-4 mr-1.5 text-gray-500" />
+                {task.category}
+                </div>
+                <div className="flex items-center col-span-2">
+                <CalendarIcon className="w-4 h-4 mr-1.5 text-gray-500" />
+                {new Date(task.deadline).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
+                </div>
             </div>
-            <div className="flex items-center">
-              <TagIcon className="w-4 h-4 mr-1 text-gray-500" />
-              {task.category}
-            </div>
-            <div className="flex items-center">
-              <CalendarIcon className="w-4 h-4 mr-1 text-gray-500" />
-              {new Date(task.deadline).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}
-            </div>
-        </div>
 
-        <div className="flex items-center space-x-2 mt-4 md:mt-0 md:ml-6">
-          <button onClick={() => onEdit(task)} className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-800"><PencilIcon /></button>
-          <button onClick={() => onDelete(task.id)} className="p-2 rounded-full hover:bg-red-100 transition-colors text-red-500 hover:text-red-700"><TrashIcon /></button>
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-1 self-end sm:self-center sm:ml-4">
+            <button onClick={() => onEdit(task)} className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-500 hover:text-gray-800"><PencilIcon /></button>
+            <button onClick={() => onDelete(task.id)} className="p-2 rounded-full hover:bg-red-100 transition-colors text-red-500 hover:text-red-700"><TrashIcon /></button>
+            </div>
         </div>
       </div>
       {task.notes && (
-          <div className="bg-gray-50 px-5 py-3 border-t border-gray-200">
-            <p className="text-sm text-gray-600 flex items-start"><NotesIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0"/> {task.notes}</p>
+          <div className="bg-gray-50/80 px-5 py-3 border-t border-gray-200">
+            <p className="text-sm text-gray-700 flex items-start"><NotesIcon className="w-4 h-4 mr-2 mt-0.5 flex-shrink-0 text-gray-500"/> {task.notes}</p>
           </div>
         )}
     </div>

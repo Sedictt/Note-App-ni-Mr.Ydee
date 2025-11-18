@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Task } from '../types';
 import TaskItem from './TaskItem';
-import { ClipboardListIcon } from './Icons';
+import { ClipboardListIcon, PlusIcon } from './Icons';
 
 interface TaskListProps {
   tasks: Task[];
@@ -12,6 +11,7 @@ interface TaskListProps {
   selectedTasks: Set<string>;
   onToggleSelection: (id: string) => void;
   onSelectAll: () => void;
+  onAddNew: () => void;
 }
 
 const TaskList: React.FC<TaskListProps> = ({
@@ -21,19 +21,29 @@ const TaskList: React.FC<TaskListProps> = ({
   onToggleComplete,
   selectedTasks,
   onToggleSelection,
-  onSelectAll
+  onSelectAll,
+  onAddNew,
 }) => {
   if (tasks.length === 0) {
     return (
-      <div className="text-center py-16 px-6 bg-white rounded-lg shadow-md">
-        <ClipboardListIcon className="mx-auto h-12 w-12 text-gray-400" />
-        <h3 className="mt-2 text-lg font-medium text-gray-900">No tasks found</h3>
-        <p className="mt-1 text-sm text-gray-500">Add a new task to get started!</p>
+      <div className="text-center py-16 px-6 bg-white rounded-xl shadow-md border-2 border-dashed border-gray-300">
+        <ClipboardListIcon className="mx-auto h-16 w-16 text-indigo-300" />
+        <h3 className="mt-4 text-xl font-semibold text-gray-900">Your Task List is Empty</h3>
+        <p className="mt-2 text-sm text-gray-500">Let's get organized. Add a task to get started!</p>
+        <button
+            onClick={onAddNew}
+            className="mt-6 flex items-center mx-auto bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-5 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+        >
+            <PlusIcon />
+            <span className="ml-2">Add Your First Task</span>
+        </button>
       </div>
     );
   }
 
-  const allVisibleSelected = tasks.length > 0 && selectedTasks.size === tasks.length;
+  const allVisibleSelected = tasks.length > 0 && tasks.every(task => selectedTasks.has(task.id));
+  const someVisibleSelected = tasks.some(task => selectedTasks.has(task.id)) && !allVisibleSelected;
+
 
   return (
     <div className="space-y-4">
@@ -42,6 +52,9 @@ const TaskList: React.FC<TaskListProps> = ({
           type="checkbox"
           className="h-5 w-5 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           checked={allVisibleSelected}
+          ref={input => {
+            if (input) input.indeterminate = someVisibleSelected;
+          }}
           onChange={onSelectAll}
           aria-label="Select all visible tasks"
         />

@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { Task, FilterType, SortType, ExportRatio } from './types';
 import TaskList from './components/TaskList';
@@ -121,25 +120,25 @@ const App: React.FC = () => {
   }, [tasks, selectedTasks]);
   
   return (
-    <div className="min-h-screen bg-gray-100 font-sans text-gray-800">
-      <main className="max-w-4xl mx-auto p-4 md:p-8">
-        <header className="flex flex-col sm:flex-row justify-between items-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-700 tracking-tight">Task Planner</h1>
-          <div className="flex items-center space-x-2 mt-4 sm:mt-0">
+    <div className="min-h-screen font-sans text-gray-800">
+      <main className="max-w-4xl mx-auto p-3 sm:p-4 md:p-8">
+        <header className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <h1 className="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-500 tracking-tight">Task Planner</h1>
+          <div className="flex items-center space-x-2">
             <button
               onClick={() => setIsExportOpen(true)}
               disabled={selectedTasks.size === 0}
-              className="flex items-center bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="flex items-center bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow-sm transition-all duration-300 disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
             >
               <DownloadIcon />
-              <span className="ml-2">Export</span>
+              <span className="ml-2 hidden sm:inline">Export</span>
             </button>
             <button
               onClick={openNewForm}
-              className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition-all duration-300"
+              className="flex items-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
             >
               <PlusIcon />
-              <span className="ml-2">Add Task</span>
+              <span className="ml-2 hidden sm:inline">Add Task</span>
             </button>
           </div>
         </header>
@@ -154,6 +153,7 @@ const App: React.FC = () => {
           selectedTasks={selectedTasks}
           onToggleSelection={handleToggleSelection}
           onSelectAll={() => handleSelectAll(sortedTasks.map(t => t.id))}
+          onAddNew={openNewForm}
         />
 
         {isFormOpen && (
