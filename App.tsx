@@ -1,17 +1,17 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Task, FilterType, SortType, ExportRatio } from './types';
+import { Task, FilterType, SortType, Priority } from './types';
 import TaskList from './components/TaskList';
 import TaskFormModal from './components/TaskFormModal';
 import Controls from './components/Controls';
 import ExportModal from './components/ExportModal';
 import { PlusIcon, DownloadIcon } from './components/Icons';
+import { db } from './firebase';
+import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    const savedTasks = localStorage.getItem('tasks');
-    return savedTasks ? JSON.parse(savedTasks) : [];
-  });
-
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
@@ -21,9 +21,23 @@ const App: React.FC = () => {
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
   const [isBulkEditMode, setIsBulkEditMode] = useState(false);
 
+  const tasksCollectionRef = collection(db, 'tasks');
+
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    const getTasks = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getDocs(tasksCollectionRef);
+        const fetchedTasks = data.docs.map(doc => ({ ...doc.data(), id: doc.id } as Task));
+        setTasks(fetchedTasks);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getTasks();
+  }, []);
   
   const toggleBulkEditMode = () => {
     if (isBulkEditMode) { // When turning OFF
@@ -32,25 +46,68 @@ const App: React.FC = () => {
     setIsBulkEditMode(prev => !prev);
   };
 
-  const handleAddTask = (task: Task) => {
-    setTasks([...tasks, task]);
+  const handleAddTask = async (task: Omit<Task, 'id' | 'isCompleted' | 'dateAdded'>) => {
+    const newTaskData = { ...task, isCompleted: false, dateAdded: new Date().toISOString() };
+    const tempId = `temp-${Date.now()}`;
+    const newTaskWithTempId = { ...newTaskData, id: tempId };
+
+    setTasks(prev => [...prev, newTaskWithTempId]);
+
+    try {
+        const docRef = await addDoc(tasksCollectionRef, newTaskData);
+        setTasks(prevTasks => prevTasks.map(t => t.id === tempId ? { ...newTaskData, id: docRef.id } : t));
+    } catch (error) {
+        console.error("Error adding task: ", error);
+        setTasks(prevTasks => prevTasks.filter(t => t.id !== tempId));
+    }
   };
 
-  const handleUpdateTask = (updatedTask: Task) => {
+  const handleUpdateTask = async (updatedTask: Task) => {
+    const originalTasks = [...tasks];
     setTasks(tasks.map(task => task.id === updatedTask.id ? updatedTask : task));
+
+    try {
+        const taskDoc = doc(db, 'tasks', updatedTask.id);
+        const { id, ...taskData } = updatedTask;
+        await updateDoc(taskDoc, taskData);
+    } catch (error) {
+        console.error("Error updating task: ", error);
+        setTasks(originalTasks);
+    }
   };
 
-  const handleDeleteTask = (id: string) => {
+  const handleDeleteTask = async (id: string) => {
+    const originalTasks = [...tasks];
     setTasks(tasks.filter(task => task.id !== id));
     setSelectedTasks(prev => {
       const newSet = new Set(prev);
       newSet.delete(id);
       return newSet;
     });
+
+    try {
+        const taskDoc = doc(db, 'tasks', id);
+        await deleteDoc(taskDoc);
+    } catch (error) {
+        console.error("Error deleting task: ", error);
+        setTasks(originalTasks);
+    }
   };
 
-  const handleToggleComplete = (id: string) => {
+  const handleToggleComplete = async (id: string) => {
+    const originalTasks = [...tasks];
     setTasks(tasks.map(task => task.id === id ? { ...task, isCompleted: !task.isCompleted } : task));
+    
+    try {
+        const taskToToggle = originalTasks.find(task => task.id === id);
+        if (taskToToggle) {
+            const taskDoc = doc(db, 'tasks', id);
+            await updateDoc(taskDoc, { isCompleted: !taskToToggle.isCompleted });
+        }
+    } catch (error) {
+        console.error("Error toggling task completion: ", error);
+        setTasks(originalTasks);
+    }
   };
 
   const openEditForm = (task: Task) => {
@@ -162,17 +219,21 @@ const App: React.FC = () => {
         
         <Controls filter={filter} setFilter={setFilter} sortBy={sortBy} setSortBy={setSortBy} />
 
-        <TaskList
-          tasks={sortedTasks}
-          onEdit={openEditForm}
-          onDelete={handleDeleteTask}
-          onToggleComplete={handleToggleComplete}
-          selectedTasks={selectedTasks}
-          onToggleSelection={handleToggleSelection}
-          onSelectAll={() => handleSelectAll(sortedTasks.map(t => t.id))}
-          onAddNew={openNewForm}
-          isBulkEditMode={isBulkEditMode}
-        />
+        {isLoading ? (
+          <div className="text-center py-16 text-gray-500 font-semibold">Loading tasks...</div>
+        ) : (
+          <TaskList
+            tasks={sortedTasks}
+            onEdit={openEditForm}
+            onDelete={handleDeleteTask}
+            onToggleComplete={handleToggleComplete}
+            selectedTasks={selectedTasks}
+            onToggleSelection={handleToggleSelection}
+            onSelectAll={() => handleSelectAll(sortedTasks.map(t => t.id))}
+            onAddNew={openNewForm}
+            isBulkEditMode={isBulkEditMode}
+          />
+        )}
 
         {isFormOpen && (
           <TaskFormModal

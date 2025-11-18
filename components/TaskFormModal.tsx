@@ -4,7 +4,7 @@ import { XIcon } from './Icons';
 
 interface TaskFormModalProps {
   onClose: () => void;
-  onAddTask: (task: Task) => void;
+  onAddTask: (task: Omit<Task, 'id' | 'isCompleted' | 'dateAdded'>) => void;
   onUpdateTask: (task: Task) => void;
   taskToEdit: Task | null;
 }
@@ -29,7 +29,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({ onClose, onAddTask, onUpd
     if (taskToEdit) {
       onUpdateTask({ ...task, id: taskToEdit.id, isCompleted: taskToEdit.isCompleted, dateAdded: taskToEdit.dateAdded });
     } else {
-      onAddTask({ ...task, id: Date.now().toString(), isCompleted: false, dateAdded: new Date().toISOString() });
+      onAddTask(task);
     }
     onClose();
   };
