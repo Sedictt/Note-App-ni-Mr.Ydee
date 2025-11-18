@@ -2,9 +2,6 @@ import React, { useState, useRef } from 'react';
 import { Task, ExportRatio, Category } from '../types';
 import { XIcon, DownloadIcon, CheckCircleIcon } from './Icons';
 
-// This is a browser global from the script in index.html
-declare var htmlToImage: any;
-
 interface ExportModalProps {
   onClose: () => void;
   tasks: Task[];
@@ -93,12 +90,20 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
 
   const handleExport = async () => {
     if (!exportRef.current) return;
+    
+    const htmlToImage = (window as any).htmlToImage;
+    if (!htmlToImage) {
+      console.error('html-to-image library not loaded. Please check the script tag in index.html.');
+      alert('Could not export image. The required library is missing.');
+      return;
+    }
+    
     setIsExporting(true);
     try {
       const { w, h } = aspectRatios[ratio];
       const dataUrl = fileType === 'png'
         ? await htmlToImage.toPng(exportRef.current, { width: w, height: h, pixelRatio: 1 })
-        : await htmlToImage.toJpeg(exportRef.current, { width: w, height: h, quality: 0.95 });
+        : await htmlToImage.toJpeg(exportRef.current, { width: h, height: h, quality: 0.95 });
 
       const link = document.createElement('a');
       link.download = `task-list-${new Date().toISOString().split('T')[0]}.${fileType}`;
@@ -168,9 +173,10 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content Options</label>
                 <div className="space-y-2 bg-white p-3 rounded-md border">
-                    {['showSubject', 'showDeadline', 'showPriority', 'showCategoryIcon', 'showWatermark'].map(key => (
+                    {/* Fix: Use 'as const' to give 'key' a specific literal union type, ensuring options[key] is a boolean. */}
+                    {(['showSubject', 'showDeadline', 'showPriority', 'showCategoryIcon', 'showWatermark'] as const).map(key => (
                         <label key={key} className="flex items-center">
-                            <input type="checkbox" name={key} checked={options[key as keyof typeof options]} onChange={handleOptionChange} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                            <input type="checkbox" name={key} checked={options[key]} onChange={handleOptionChange} className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                             <span className="ml-2 text-sm text-gray-800">Show {key.replace('show', '').replace(/([A-Z])/g, ' $1').trim()}</span>
                         </label>
                     ))}
