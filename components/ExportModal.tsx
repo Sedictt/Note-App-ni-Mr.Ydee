@@ -100,13 +100,11 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
     try {
         const { w, h } = aspectRatios[ratio];
 
-        // This scales the content correctly. We calculate a multiplier based on the
-        // desired image width vs the on-screen preview width. We then use this to
-        // scale up the base font size. Because Tailwind uses `rem` units, increasing
-        // the root font size proportionally scales all text and spacing.
-        const fontSizeMultiplier = w / element.offsetWidth;
-        const baseFontSize = 10; // Using 10px as a base makes scaling math clean.
-        const scaledFontSize = baseFontSize * fontSizeMultiplier;
+        // This is the correct scaling logic.
+        // It calculates a scale factor based on the target width and the element's actual on-screen width.
+        // This scale factor is then applied via a CSS transform during the image generation process.
+        // 'transform-origin: top left' ensures the scaling originates from the corner, not the center.
+        const scale = w / element.offsetWidth;
 
         const imageOptions = {
             width: w,
@@ -115,7 +113,8 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
             // resulting in a much crisper, higher-quality final image.
             pixelRatio: 2,
             style: {
-                fontSize: `${scaledFontSize}px`,
+                transform: `scale(${scale})`,
+                transformOrigin: 'top left',
             },
         };
 
