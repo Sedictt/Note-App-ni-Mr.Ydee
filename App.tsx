@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortType>('deadline');
   const [selectedTasks, setSelectedTasks] = useState<Set<string>>(new Set());
   const [isBulkEditMode, setIsBulkEditMode] = useState(false);
-  const [confirmation, setConfirmation] = useState<{ message: string; onConfirm: () => void } | null>(null);
+  const [confirmation, setConfirmation] = useState<{ message: string; onConfirm: () => void; variant?: 'danger' | 'primary'; confirmText?: string; } | null>(null);
 
 
   const tasksCollectionRef = collection(db, 'tasks');
@@ -104,10 +104,12 @@ const App: React.FC = () => {
     setConfirmation({
         message: `Are you sure you want to delete the task "${taskToDelete.name}"? This action cannot be undone.`,
         onConfirm: () => handleDeleteTask(id),
+        variant: 'danger',
+        confirmText: 'Delete',
     });
   };
 
-  const handleToggleComplete = async (id: string) => {
+  const performToggleComplete = async (id: string) => {
     const originalTasks = [...tasks];
     setTasks(tasks.map(task => task.id === id ? { ...task, isCompleted: !task.isCompleted } : task));
     
@@ -120,6 +122,24 @@ const App: React.FC = () => {
     } catch (error) {
         console.error("Error toggling task completion: ", error);
         setTasks(originalTasks);
+    }
+  };
+
+  const handleToggleComplete = (id: string) => {
+    const taskToToggle = tasks.find(t => t.id === id);
+    if (!taskToToggle) return;
+
+    // If task is NOT completed, we are about to mark it AS complete. Show confirmation.
+    if (!taskToToggle.isCompleted) {
+        setConfirmation({
+            message: `Are you sure you want to mark "${taskToToggle.name}" as complete?`,
+            onConfirm: () => performToggleComplete(id),
+            variant: 'primary',
+            confirmText: 'Mark Complete',
+        });
+    } else {
+        // If task IS already complete, we are marking it as incomplete. No confirmation needed.
+        performToggleComplete(id);
     }
   };
 
@@ -272,6 +292,8 @@ const App: React.FC = () => {
               setConfirmation(null);
             }}
             onCancel={() => setConfirmation(null)}
+            variant={confirmation.variant}
+            confirmText={confirmation.confirmText}
           />
         )}
       </main>

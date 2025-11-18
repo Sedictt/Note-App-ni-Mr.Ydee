@@ -1,13 +1,30 @@
 import React from 'react';
-import { XIcon, TrashIcon } from './Icons';
+import { XIcon, TrashIcon, CheckCircleIcon } from './Icons';
 
 interface ConfirmationModalProps {
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
+  confirmText?: string;
+  variant?: 'danger' | 'primary';
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message, onConfirm, onCancel }) => {
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message, onConfirm, onCancel, confirmText, variant = 'danger' }) => {
+  const buttonConfig = {
+    danger: {
+      className: "bg-red-600 hover:bg-red-700",
+      icon: <TrashIcon className="w-4 h-4 mr-2" />,
+      text: "Delete"
+    },
+    primary: {
+      className: "bg-green-600 hover:bg-green-700",
+      icon: <CheckCircleIcon className="w-4 h-4 mr-2" />,
+      text: "Confirm"
+    }
+  };
+  
+  const config = buttonConfig[variant];
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex justify-center items-center z-50 p-4" onClick={onCancel}>
       <div className="bg-white rounded-xl shadow-xl w-full max-w-sm" onClick={e => e.stopPropagation()}>
@@ -27,10 +44,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ message, onConfir
           <button
             type="button"
             onClick={onConfirm}
-            className="bg-red-600 text-white font-semibold px-4 py-2 rounded-md hover:bg-red-700 transition-colors flex items-center"
+            className={`${config.className} text-white font-semibold px-4 py-2 rounded-md transition-colors flex items-center`}
           >
-            <TrashIcon className="w-4 h-4 mr-2" />
-            Confirm
+            {config.icon}
+            {confirmText || config.text}
           </button>
         </div>
       </div>
