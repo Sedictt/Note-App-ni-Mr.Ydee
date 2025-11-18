@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import * as htmlToImage from 'html-to-image';
 import { Task, ExportRatio, Category } from '../types';
 import { XIcon, DownloadIcon, CheckCircleIcon } from './Icons';
 
@@ -91,19 +92,12 @@ const ExportModal: React.FC<ExportModalProps> = ({ onClose, tasks }) => {
   const handleExport = async () => {
     if (!exportRef.current) return;
     
-    const htmlToImage = (window as any).htmlToImage;
-    if (!htmlToImage) {
-      console.error('html-to-image library not loaded. Please check the script tag in index.html.');
-      alert('Could not export image. The required library is missing.');
-      return;
-    }
-    
     setIsExporting(true);
     try {
       const { w, h } = aspectRatios[ratio];
       const dataUrl = fileType === 'png'
         ? await htmlToImage.toPng(exportRef.current, { width: w, height: h, pixelRatio: 1 })
-        : await htmlToImage.toJpeg(exportRef.current, { width: h, height: h, quality: 0.95 });
+        : await htmlToImage.toJpeg(exportRef.current, { width: w, height: h, quality: 0.95 });
 
       const link = document.createElement('a');
       link.download = `task-list-${new Date().toISOString().split('T')[0]}.${fileType}`;
